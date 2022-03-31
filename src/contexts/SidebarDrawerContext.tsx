@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useDisclosure, UseDisclosureReturn } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { createContext, ReactNode, useContext, useEffect } from "react";
@@ -16,7 +17,7 @@ export function SidebarDrawerProvider({ children }: SidebarDrawerProviderProps) 
 
   useEffect(() => {
     disclosure.onClose();
-  }, [disclosure, router.asPath]);
+  }, [router.asPath]);
 
   return (
     <SidebarDrawerContext.Provider value={disclosure}>
