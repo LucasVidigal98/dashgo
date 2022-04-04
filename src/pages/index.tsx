@@ -1,4 +1,4 @@
-import { Button, Flex, FormControl, FormLabel, Stack } from '@chakra-ui/react';
+import { Button, Flex, Stack } from '@chakra-ui/react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { Input } from '../components/Form/Input';
 import * as yup from 'yup';
@@ -23,7 +23,7 @@ export default function Home() {
 
   const handleSignIn: SubmitHandler<SignInFormData> = async (values) => {
     await new Promise((resolve) => setTimeout(resolve, 2000));
-    console.log(values.email);
+    console.log(values);
   }
 
   return (
