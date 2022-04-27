@@ -49,7 +49,7 @@ function Pagination({
       <Stack direction="row" spacing="2">
         {currentPage > (1 + siblingCount) && (
            <>
-           <PaginationItem number={1} />
+           <PaginationItem number={1} onPageChange={onChangePage} />
            { currentPage > (2 + siblingCount) && 
             <Text color="gray.300" width="8" textAlign="center">...</Text> 
           }
@@ -57,13 +57,13 @@ function Pagination({
         )}
 
         {previousPage.length > 0 && previousPage.map(page => {
-          return <PaginationItem key={page} number={page} />
+          return <PaginationItem onPageChange={onChangePage} key={page} number={page} />
         })}
 
-        <PaginationItem isCurrent number={currentPage} />
+        <PaginationItem onPageChange={onChangePage} isCurrent number={currentPage} />
 
         {nextPage.length > 0 && nextPage.map(page => {
-          return <PaginationItem key={page} number={page} />
+          return <PaginationItem onPageChange={onChangePage} key={page} number={page} />
         })}
 
         {(currentPage + siblingCount) < lastPage && (
@@ -71,7 +71,7 @@ function Pagination({
             { (currentPage + 1 + siblingCount) < lastPage && 
               <Text color="gray.300" width="8" textAlign="center">...</Text> 
             }
-            <PaginationItem number={lastPage} />
+            <PaginationItem onPageChange={onChangePage} number={lastPage} />
           </>
         )}
       </Stack>
