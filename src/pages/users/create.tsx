@@ -3,12 +3,16 @@ import Link from 'next/link';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { useRouter } from 'next/router';
 
 import { Input } from '../../components/Form/Input';
 import Header from '../../components/Header';
 import SideBar from '../../components/SideBar';
+import { useMutation } from 'react-query';
+import { api } from '../../services/api';
+import { queryClient } from '../../services/queryClient';
 
-type createFormData = {
+type CreateFormData = {
   name: string;
   email: string;
   password: string;
@@ -16,6 +20,21 @@ type createFormData = {
 }
 
 function CreateUser() {
+  const router = useRouter();
+
+  const createUser = useMutation(async (user: CreateFormData) => {
+    await api.post('users', {
+      user: {
+        ...user,
+        created_at: new Date(),
+      }
+    });
+  }, {
+    onSuccess: () => {
+      queryClient.invalidateQueries('users');
+    }
+  })
+
   const createFormSchema = yup.object().shape({
     name: yup.string().required('Nome obrigatório'),
     email: yup.string().email('E-mail inválido').required('E-mail obrigatório'),
@@ -27,10 +46,10 @@ function CreateUser() {
     resolver: yupResolver(createFormSchema)
   });
 
-  const handleCreateUser: SubmitHandler<createFormData> = async (values) => {
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    
-    console.log(values);
+  const handleCreateUser: SubmitHandler<CreateFormData> = async (values) => {
+    await createUser.mutateAsync(values);
+
+    router.push('/users');
   }
 
   const { errors } = formState;
@@ -41,12 +60,12 @@ function CreateUser() {
 
       <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6">
         <SideBar />
-  
-        <Box 
+
+        <Box
           as="form"
-          flex="1" 
-          borderRadius={8} 
-          bg="gray.800" 
+          flex="1"
+          borderRadius={8}
+          bg="gray.800"
           p={["6", "8"]}
           onSubmit={handleSubmit(handleCreateUser)}
         >
