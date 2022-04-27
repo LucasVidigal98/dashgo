@@ -1,12 +1,14 @@
-import { Box, Button, Checkbox, Flex, Heading, Icon, Table, Tbody, Td, Th, Thead, Tr, Text, useBreakpointValue, Spinner } from '@chakra-ui/react';
-import Link from 'next/link';
+import { Box, Button, Checkbox, Flex, Heading, Icon, Table, Tbody, Td, Th, Thead, Tr, Text, useBreakpointValue, Spinner, Link } from '@chakra-ui/react';
+import NextLink from 'next/link';
 import { useState } from 'react';
 import { RiAddLine, RiPencilLine } from 'react-icons/ri';
 
 import Header from '../../components/Header';
 import Pagination from '../../components/Pagination';
 import SideBar from '../../components/SideBar';
+import { api } from '../../services/api';
 import { useUsers } from '../../services/hooks/useUsers';
+import { queryClient } from '../../services/queryClient';
 
 function UserList() {
   const [page, setPage] = useState(1);
@@ -17,6 +19,16 @@ function UserList() {
     base: false,
     lg: true,
   });
+
+  async function handlePrefetchUser(userId: string) {
+    await queryClient.prefetchQuery(['user', userId], async () => {
+      const response = await api.get(`users/${userId}`);
+
+      return response.data;
+    }, {
+      staleTime: 1000 * 60 * 10,
+    });
+  }
 
   return (
     <Box>
@@ -31,7 +43,7 @@ function UserList() {
               Usuários
               { !isLoading && isFetching && <Spinner size="sm" color="gray.500" ml="4" /> }
             </Heading>
-            <Link href="/users/create" passHref>
+            <NextLink href="/users/create" passHref>
               <Button
                 as="a"
                 size="sm"
@@ -41,7 +53,7 @@ function UserList() {
               >
                 Criar novo
               </Button>
-            </Link>
+            </NextLink>
           </Flex>
 
           {isLoading ? (
@@ -76,7 +88,9 @@ function UserList() {
 
                         <Td>
                           <Box>
-                            <Text fontWeight="bold">{user.name}</Text>
+                            <Link color="purple.400" onMouseEnter={() => handlePrefetchUser(user.id)}>
+                              <Text fontWeight="bold">{user.name}</Text>
+                            </Link>
                             <Text fontSize="sm" color="gray.300">{user.email}</Text>
                           </Box>
                         </Td>
